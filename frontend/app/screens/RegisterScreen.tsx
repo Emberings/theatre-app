@@ -8,11 +8,24 @@ export default function RegisterScreen({ navigation }: any) {
   const [password, setPassword] = useState('');
 
  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      Alert.alert('Σφάλμα', 'Όλα τα πεδία είναι υποχρεωτικά');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Σφάλμα', 'Μη έγκυρο email');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Σφάλμα', 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες');
+      return;
+    }
     try {
       await register(name, email, password);
       navigation.navigate('Login');
-    } catch (err) {
-      Alert.alert('Σφάλμα', 'Κάτι πήγε στραβά');
+    } catch (err: any) {
+      Alert.alert('Σφάλμα', err.response?.data?.error || 'Κάτι πήγε στραβά');
     }
   };
 

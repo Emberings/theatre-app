@@ -7,13 +7,22 @@ export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Σφάλμα', 'Email και password είναι υποχρεωτικά');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Σφάλμα', 'Μη έγκυρο email');
+      return;
+    }
     try {
       const res = await login(email, password);
       await AsyncStorage.setItem('token', res.data.token);
       navigation.replace('Theatres');
-    } catch (err) {
-      Alert.alert('Σφάλμα', 'Λάθος email ή password');
+    } catch (err: any) {
+      Alert.alert('Σφάλμα', err.response?.data?.error || 'Λάθος email ή password');
     }
   };
 
