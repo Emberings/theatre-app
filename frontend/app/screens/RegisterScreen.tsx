@@ -1,31 +1,32 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { register } from '../../api';
 
 export default function RegisterScreen({ navigation }: any) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
- const handleRegister = async () => {
+  const handleRegister = async () => {
     if (!name || !email || !password) {
-      Alert.alert('Σφάλμα', 'Όλα τα πεδία είναι υποχρεωτικά');
+      setError('Όλα τα πεδία είναι υποχρεωτικά');
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      Alert.alert('Σφάλμα', 'Μη έγκυρο email');
+      setError('Μη έγκυρο email');
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Σφάλμα', 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες');
+      setError('Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες');
       return;
     }
     try {
       await register(name, email, password);
-      navigation.navigate('Login');
+      navigation.replace('Login');
     } catch (err: any) {
-      Alert.alert('Σφάλμα', err.response?.data?.error || 'Κάτι πήγε στραβά');
+      setError(err.response?.data?.error || 'Κάτι πήγε στραβά');
     }
   };
 
@@ -36,6 +37,7 @@ export default function RegisterScreen({ navigation }: any) {
         <Text style={styles.subtitle}>Δημιουργία λογαριασμού</Text>
       </View>
       <View style={styles.form}>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
         <Text style={styles.label}>Όνομα</Text>
         <TextInput style={styles.input} placeholder="Το όνομά σου" placeholderTextColor="#888" value={name} onChangeText={setName} />
         <Text style={styles.label}>Email</Text>
@@ -59,6 +61,7 @@ const styles = StyleSheet.create({
   appName: { fontSize: 36, fontWeight: 'bold', color: '#fff', letterSpacing: 2 },
   subtitle: { fontSize: 14, color: '#c9a227', marginTop: 6, letterSpacing: 1 },
   form: { backgroundColor: '#1a1a2e', borderRadius: 16, padding: 24 },
+  error: { color: '#e74c3c', fontSize: 13, marginBottom: 10, textAlign: 'center' },
   label: { color: '#aaa', fontSize: 13, marginBottom: 6, marginTop: 12 },
   input: { backgroundColor: '#0f0f1a', color: '#fff', borderRadius: 8, padding: 12, fontSize: 15, borderWidth: 1, borderColor: '#333' },
   button: { backgroundColor: '#c9a227', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 24 },

@@ -13,19 +13,17 @@ import TheatresScreen from './app/screens/TheatresScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem('token').then(t => {
-      setToken(t);
+    AsyncStorage.removeItem('token').then(() => {
       setLoading(false);
     });
   }, []);
 
   if (loading) return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a2e' }}>
-      <Text style={{ color: '#e94560', fontSize: 24, fontWeight: 'bold' }}> TheatreApp</Text>
+      <Text style={{ color: '#c9a227', fontSize: 24, fontWeight: 'bold' }}>TheatreApp</Text>
       <Text style={{ color: '#fff', marginTop: 10 }}>Φόρτωση...</Text>
     </View>
   );
@@ -33,7 +31,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={token ? 'Theatres' : 'Login'}
+        initialRouteName="Login"
         screenOptions={{
           headerStyle: { backgroundColor: '#1a1a2e' },
           headerTintColor: '#fff',
